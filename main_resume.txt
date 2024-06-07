@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Resume Builder</title>
+  <!-- Bootstrap CSS -->
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+  <!-- Custom CSS -->
+  <style>
+    /* Add custom styles here */
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f8f9fa;
+    }
+    .container {
+      background-color: #fff;
+      border-radius: 5px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+      padding: 30px;
+    }
+    h1, h2, h3, h4, h5, h6 {
+      font-weight: bold;
+    }
+    .section-header {
+      margin-top: 20px;
+    }
+    .section-content {
+      margin-bottom: 20px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container mt-5">
+    <h1 class="mb-4">Resume Builder</h1>
+    <form id="resumeForm">
+      <div class="section-header">
+        <h2>Personal Information</h2>
+      </div>
+      <div class="section-content">
+        <div class="form-group">
+          <label for="fullName">Full Name:</label>
+          <input type="text" class="form-control" id="fullName" required>
+        </div>
+        <div class="form-group">
+          <label for="email">Email:</label>
+          <input type="email" class="form-control" id="email" required>
+        </div>
+        <div class="form-group">
+          <label for="linkedin">LinkedIn:</label>
+          <input type="text" class="form-control" id="linkedin">
+        </div>
+        <div class="form-group">
+          <label for="phone">Phone Number:</label>
+          <input type="text" class="form-control" id="phone">
+        </div>
+        <div class="form-group">
+          <label for="address">Address:</label>
+          <input type="text" class="form-control" id="address">
+        </div>
+      </div>
+
+      <div class="section-header">
+        <h2>Work Experience</h2>
+      </div>
+      <div class="section-content">
+        <div class="form-group">
+          <label for="experience">Work Experience:</label>
+          <textarea class="form-control" id="experience" rows="5" required></textarea>
+        </div>
+      </div>
+
+      <div class="section-header">
+        <h2>Education</h2>
+      </div>
+      <div class="section-content">
+        <div class="form-group">
+          <label for="education">Education:</label>
+          <textarea class="form-control" id="education" rows="5" required></textarea>
+        </div>
+      </div>
+
+      <div class="section-header">
+        <h2>Skillset</h2>
+      </div>
+      <div class="section-content">
+        <div class="form-group">
+          <label for="skills">Skills:</label>
+          <textarea class="form-control" id="skills" rows="5" required></textarea>
+        </div>
+      </div>
+
+      <div class="section-header">
+        <h2>Awards and Achievements</h2>
+      </div>
+      <div class="section-content">
+        <div class="form-group">
+          <label for="awards">Awards and Achievements:</label>
+          <textarea class="form-control" id="awards" rows="5"></textarea>
+        </div>
+      </div>
+      
+      <!-- Template Selection -->
+      <div class="form-group">
+        <label for="templateSelect">Choose a Template:</label>
+        <select class="form-control" id="templateSelect">
+          <option value="template1">Template 1</option>
+          <option value="template2">Template 2</option>
+          <!-- Add more template options here -->
+        </select>
+      </div>
+      
+      <!-- Preview Area -->
+      <div id="previewArea" class="mt-4"></div>
+      
+      <!-- Download and Export -->
+      <button type="button" class="btn btn-primary mt-3" id="downloadBtn">Download Resume (PDF)</button>
+    </form>
+  </div>
+
+  <!-- Bootstrap JS -->
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+  <!-- jsPDF -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.3.1/jspdf.umd.min.js"></script>
+  <!-- Custom JavaScript -->
+  <script>
+    // Dynamic form handling and preview functionality
+    $(document).ready(function() {
+      // Update preview when form fields change
+      $('#resumeForm input, #resumeForm textarea, #resumeForm select').change(updatePreview);
+      
+      function updatePreview() {
+        var fullName = $('#fullName').val();
+        var email = $('#email').val();
+        var linkedin = $('#linkedin').val();
+        var phone = $('#phone').val();
+        var address = $('#address').val();
+        var experience = $('#experience').val();
+        var education = $('#education').val();
+        var skills = $('#skills').val();
+        var awards = $('#awards').val();
+        var template = $('#templateSelect').val();
+        
+        // Generate preview based on the selected template and form data
+        var previewHtml = `
+          <div class="section-header">
+            <h2>Personal Information</h2>
+          </div>
+          <div class="section-content">
+            <p><strong>Full Name:</strong> ${fullName}</p>
+            <p><strong>Email:</strong> ${email}</p>
+            <p><strong>LinkedIn:</strong> ${linkedin}</p>
+            <p><strong>Phone Number:</strong> ${phone}</p>
+            <p><strong>Address:</strong> ${address}</p>
+          </div>
+          <div class="section-header">
+            <h2>Work Experience</h2>
+          </div>
+          <div class="section-content">
+            <p>${experience}</p>
+          </div>
+          <div class="section-header">
+            <h2>Education</h2>
+          </div>
+          <div class="section-content">
+            <p>${education}</p>
+          </div>
+          <div class="section-header">
+            <h2>Skillset</h2>
+          </div>
+          <div class="section-content">
+            <p>${skills}</p>
+          </div>
+          <div class="section-header">
+            <h2>Awards and Achievements</h2>
+          </div>
+          <div class="section-content">
+            <p>${awards}</p>
+          </div>
+        `;
+        $('#previewArea').html(previewHtml);
+      }
+      
+      // Download resume functionality
+      $('#downloadBtn').click(function() {
+        // Generate PDF resume content based on form data
+        var fullName = $('#fullName').val();
+        var email = $('#email').val();
+        var linkedin = $('#linkedin').val();
+        var phone = $('#phone').val();
+        var address = $('#address').val();
+        var experience = $('#experience').val();
+        var education = $('#education').val();
+        var skills = $('#skills').val();
+        var awards = $('#awards').val();
+        var template = $('#templateSelect').val();
+        
+        // Create PDF document
+        var doc = new jsPDF();
+        doc.setFontSize(16);
+        doc.text(20, 20, 'Resume');
+
+        // Personal Information
+        doc.setFontSize(14);
+        doc.text(20, 30, 'Personal Information');
+        doc.setFontSize(12);
+        doc.text(20, 40, `Full Name: ${fullName}`);
+        doc.text(20, 50, `Email: ${email}`);
+        doc.text(20, 60, `LinkedIn: ${linkedin}`);
+        doc.text(20, 70, `Phone Number: ${phone}`);
+        doc.text(20, 80, `Address: ${address}`);
+
+        // Work Experience
+        doc.setFontSize(14);
+        doc.text(20, 100, 'Work Experience');
+        doc.setFontSize(12);
+        doc.text(20, 110, experience);
+
+        // Education
+        doc.setFontSize(14);
+        doc.text(20, 130, 'Education');
+        doc.setFontSize(12);
+        doc.text(20, 140, education);
+
+        // Skillset
+        doc.setFontSize(14);
+        doc.text(20, 160, 'Skillset');
+        doc.setFontSize(12);
+        doc.text(20, 170, skills);
+
+        // Awards and Achievements
+        doc.setFontSize(14);
+        doc.text(20, 190, 'Awards and Achievements');
+        doc.setFontSize(12);
+        doc.text(20, 200, awards);
+
+        // Save the PDF
+        doc.save('resume.pdf');
+      });
+    });
+  </script>
+</body>
+</html>
